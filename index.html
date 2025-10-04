@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Food Expenditure Predictor</title>
+    https://cdn.jsdelivr.net/npm/chart.js</script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -16,7 +17,7 @@
             background-color: #fff;
             padding: 25px;
             border-radius: 8px;
-            max-width: 500px;
+            max-width: 600px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         label {
@@ -47,6 +48,9 @@
             font-style: italic;
             color: #555;
         }
+        canvas {
+            margin-top: 30px;
+        }
     </style>
 </head>
 <body>
@@ -65,9 +69,33 @@
         <div class="formula">
             Model: Food = -1.1183 + (0.1482 × Income) + (0.7931 × Family Size)
         </div>
+
+        <canvas id="predictionChart" width="400" height="300"></canvas>
     </div>
 
     <script>
+        const ctx = document.getElementById('predictionChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Predicted Points',
+                    data: [],
+                    backgroundColor: 'blue'
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Income ($)' }
+                    },
+                    y: {
+                        title: { display: true, text: 'Predicted Food ($)' }
+                    }
+                }
+            }
+        });
+
         function predictFood() {
             const income = parseFloat(document.getElementById('income').value);
             const familySize = parseFloat(document.getElementById('familySize').value);
@@ -79,6 +107,10 @@
 
             const food = -1.1183 + (0.1482 * income) + (0.7931 * familySize);
             document.getElementById('result').innerText = "Predicted Food Expenditure: $" + food.toFixed(2);
+
+            // Add point to chart
+            chart.data.datasets[0].data.push({ x: income, y: food });
+            chart.update();
         }
     </script>
 </body>
